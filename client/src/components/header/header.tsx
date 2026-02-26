@@ -5,25 +5,33 @@ import { AddInsight } from "../add-insight/add-insight.tsx";
 
 export const HEADER_TEXT = "Suit Tracker Insights";
 
-export const Header = () => {
-  const [addInsightOpen, setAddInsightOpen] = useState(false);
+type HeaderProps = {
+    onInsightAdded?: () => void;
+};
 
-  return (
-    <>
-      <header className={styles.header}>
-        <div className={styles.inner}>
-          <span className={styles.logo}>{HEADER_TEXT}</span>
-          <Button
-            label="Add insight"
-            theme="secondary"
-            onClick={() => setAddInsightOpen(true)}
-          />
-        </div>
-      </header>
-      <AddInsight
-        open={addInsightOpen}
-        onClose={() => setAddInsightOpen(false)}
-      />
-    </>
-  );
+export const Header = ({ onInsightAdded }: HeaderProps) => {
+    const [addInsightOpen, setAddInsightOpen] = useState(false);
+
+    return (
+        <>
+            <header className={styles.header}>
+                <div className={styles.inner}>
+                    <span className={styles.logo}>{HEADER_TEXT}</span>
+                    <Button
+                        label="Add insight"
+                        theme="secondary"
+                        onClick={() => setAddInsightOpen(true)}
+                    />
+                </div>
+            </header>
+            <AddInsight
+                open={addInsightOpen}
+                onClose={() => setAddInsightOpen(false)}
+                onSuccess={() => {
+                    setAddInsightOpen(false);
+                    onInsightAdded?.();
+                }}
+            />
+        </>
+    );
 };
