@@ -9,3 +9,7 @@
 .insights {
   margin-top: var(--size-10);
 }
+
+.error {
+  color: var(--color-red-500);
+}

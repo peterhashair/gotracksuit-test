@@ -3,8 +3,11 @@ import { Database } from "@db/sqlite";
 import * as oak from "@oak/oak";
 import * as path from "@std/path";
 import { Port } from "../lib/utils/index.ts";
+import createInsight from "./operations/create-insight.ts";
+import deleteInsight from "./operations/delete-insight.ts";
 import listInsights from "./operations/list-insights.ts";
 import lookupInsight from "./operations/lookup-insight.ts";
+import * as insightsTable from "./tables/insights.ts";
 
 console.log("Loading configuration");
 
@@ -18,6 +21,7 @@ console.log(`Opening SQLite database at ${dbFilePath}`);
 
 await Deno.mkdir(path.dirname(dbFilePath), { recursive: true });
 const db = new Database(dbFilePath);
+db.exec(insightsTable.createTable);
 
 console.log("Initialising server");
 
@@ -29,24 +33,49 @@ router.get("/_health", (ctx) => {
 });
 
 router.get("/insights", (ctx) => {
-  const result = listInsights({ db });
-  ctx.response.body = result;
-  ctx.response.body = 200;
+  try {
+    const result = listInsights({ db });
+    ctx.response.body = result;
+    ctx.response.status = 200;
+  } catch (e) {
+    console.error("GET /insights failed:", e);
+    ctx.response.status = 500;
+  }
 });
 
 router.get("/insights/:id", (ctx) => {
-  const params = ctx.params as Record<string, any>;
-  const result = lookupInsight({ db, id: params.id });
-  ctx.response.body = result;
-  ctx.response.status = 200;
+  try {
+    const params = ctx.params as Record<string, any>;
+    const result = lookupInsight({ db, id: Number(params.id) });
+    ctx.response.body = result;
+    ctx.response.status = 200;
+  } catch (e) {
+    console.error("GET /insights/:id failed:", e);
+    ctx.response.status = 500;
+  }
 });
 
-router.get("/insights/create", (ctx) => {
-  // TODO
+router.post("/insights", async (ctx) => {
+  try {
+    const body = await ctx.request.body.json();
+    const result = createInsight({ db, brandId: body.brandId, text: body.text });
+    ctx.response.body = result;
+    ctx.response.status = 201;
+  } catch (e) {
+    console.error("POST /insights failed:", e);
+    ctx.response.status = 500;
+  }
 });
 
-router.get("/insights/delete", (ctx) => {
-  // TODO
+router.delete("/insights/:id", (ctx) => {
+  try {
+    const params = ctx.params as Record<string, any>;
+    const found = deleteInsight({ db, id: Number(params.id) });
+    ctx.response.status = found ? 204 : 404;
+  } catch (e) {
+    console.error("DELETE /insights/:id failed:", e);
+    ctx.response.status = 500;
+  }
 });
 
 const app = new oak.Application();

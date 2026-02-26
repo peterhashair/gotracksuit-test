@@ -1,32 +1,61 @@
+import { useState } from "react";
 import { BRANDS } from "../../lib/consts.ts";
 import { Button } from "../button/button.tsx";
 import { Modal, type ModalProps } from "../modal/modal.tsx";
 import styles from "./add-insight.module.css";
 
-type AddInsightProps = ModalProps;
+type AddInsightProps = ModalProps & {
+  onSuccess?: () => void;
+};
 
-export const AddInsight = (props: AddInsightProps) => {
-  const addInsight = () => undefined;
+export const AddInsight = ({ onSuccess, ...props }: AddInsightProps) => {
+  const [brandId, setBrandId] = useState(BRANDS[0].id);
+  const [text, setText] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const addInsight = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetch("/api/insights", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ brandId, text }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        props.onClose();
+        onSuccess?.();
+      })
+      .catch(() => setError("Failed to add insight"));
+  };
 
   return (
-    <Modal {...props}>
-      <h1 className={styles.heading}>Add a new insight</h1>
-      <form className={styles.form} onSubmit={addInsight}>
-        <label className={styles.field}>
-          <select className={styles["field-input"]}>
-            {BRANDS.map(({ id, name }) => <option value={id}>{name}</option>)}
-          </select>
-        </label>
-        <label className={styles.field}>
-          Insight
-          <textarea
-            className={styles["field-input"]}
-            rows={5}
-            placeholder="Something insightful..."
-          />
-        </label>
-        <Button className={styles.submit} type="submit" label="Add insight" />
-      </form>
-    </Modal>
+      <Modal {...props}>
+        <h1 className={styles.heading}>Add a new insight</h1>
+        <form className={styles.form} onSubmit={addInsight}>
+          <label className={styles.field}>
+            <select
+                className={styles["field-input"]}
+                value={brandId}
+                onChange={(e) => setBrandId(Number(e.target.value))}
+            >
+              {BRANDS.map(({ id, name }) => (
+                  <option key={id} value={id}>{name}</option>
+              ))}
+            </select>
+          </label>
+          <label className={styles.field}>
+            Insight
+            <textarea
+                className={styles["field-input"]}
+                rows={5}
+                placeholder="Something insightful..."
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+            />
+          </label>
+          {error && <p className={styles.error}>{error}</p>}
+          <Button className={styles.submit} type="submit" label="Add insight" />
+        </form>
+      </Modal>
   );
 };
