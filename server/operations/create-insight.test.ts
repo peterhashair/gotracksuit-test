@@ -10,7 +10,11 @@ describe("creating an insight in the database", () => {
       let result: Insight;
 
       beforeAll(() => {
-        result = createInsight({ ...fixture, brandId: 1, text: "A new insight" });
+        result = createInsight({
+          ...fixture,
+          brandId: 1,
+          text: "A new insight",
+        });
       });
 
       it("returns the created insight", () => {

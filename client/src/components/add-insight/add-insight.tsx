@@ -33,33 +33,37 @@ export const AddInsight = ({ onSuccess, ...props }: AddInsightProps) => {
   };
 
   return (
-      <Modal {...props}>
-        <h1 className={styles.heading}>Add a new insight</h1>
-        <form className={styles.form} onSubmit={addInsight} aria-label="Add insight">
-          <label className={styles.field}>
-            <select
-                className={styles["field-input"]}
-                value={brandId}
-                onChange={(e) => setBrandId(Number(e.target.value))}
-            >
-              {BRANDS.map(({ id, name }) => (
-                  <option key={id} value={id}>{name}</option>
-              ))}
-            </select>
-          </label>
-          <label className={styles.field}>
-            Insight
-            <textarea
-                className={styles["field-input"]}
-                rows={5}
-                placeholder="Something insightful..."
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-            />
-          </label>
-          {error && <p className={styles.error}>{error}</p>}
-          <Button className={styles.submit} type="submit" label="Add insight" />
-        </form>
-      </Modal>
+    <Modal {...props}>
+      <h1 className={styles.heading}>Add a new insight</h1>
+      <form
+        className={styles.form}
+        onSubmit={addInsight}
+        aria-label="Add insight"
+      >
+        <label className={styles.field}>
+          <select
+            className={styles["field-input"]}
+            value={brandId}
+            onChange={(e) => setBrandId(Number(e.target.value))}
+          >
+            {BRANDS.map(({ id, name }) => (
+              <option key={id} value={id}>{name}</option>
+            ))}
+          </select>
+        </label>
+        <label className={styles.field}>
+          Insight
+          <textarea
+            className={styles["field-input"]}
+            rows={5}
+            placeholder="Something insightful..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+        </label>
+        {error && <p className={styles.error}>{error}</p>}
+        <Button className={styles.submit} type="submit" label="Add insight" />
+      </form>
+    </Modal>
   );
 };

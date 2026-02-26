@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { Insights } from "./insights.tsx";
 
 const TEST_INSIGHTS = [
@@ -28,7 +28,7 @@ describe("insights", () => {
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: true });
 
     const { container } = render(
-        <Insights insights={TEST_INSIGHTS} onInsightDeleted={onInsightDeleted} />,
+      <Insights insights={TEST_INSIGHTS} onInsightDeleted={onInsightDeleted} />,
     );
 
     const trashIcons = container.querySelectorAll("svg");

@@ -1,9 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, fireEvent, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { Header, HEADER_TEXT } from "./header.tsx";
 
 const getHeaderButton = () =>
-  within(screen.getByRole("banner")).getByRole("button", { name: "Add insight" });
+  within(screen.getByRole("banner")).getByRole("button", {
+    name: "Add insight",
+  });
 
 describe("Header", () => {
   it("renders the header text", () => {

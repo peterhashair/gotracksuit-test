@@ -58,7 +58,11 @@ router.get("/insights/:id", (ctx) => {
 router.post("/insights", async (ctx) => {
   try {
     const body = await ctx.request.body.json();
-    const result = createInsight({ db, brandId: body.brandId, text: body.text });
+    const result = createInsight({
+      db,
+      brandId: body.brandId,
+      text: body.text,
+    });
     ctx.response.body = result;
     ctx.response.status = 201;
   } catch (e) {
