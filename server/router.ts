@@ -32,7 +32,10 @@ export const createRouter = (db: Database): oak.Router => {
       const limit = params.has("limit") ? Number(params.get("limit")) : 50;
       const offset = params.has("offset") ? Number(params.get("offset")) : 0;
 
-      if (!Number.isInteger(limit) || limit < 1 || !Number.isInteger(offset) || offset < 0) {
+      if (
+        !Number.isInteger(limit) || limit < 1 || !Number.isInteger(offset) ||
+        offset < 0
+      ) {
         ctx.response.status = 400;
         ctx.response.body = { error: "Invalid pagination parameters" };
         return;

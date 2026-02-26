@@ -25,7 +25,9 @@ describe("routes", () => {
 
     await new Promise<void>((resolve) => {
       app.addEventListener("listen", () => resolve());
-      app.listen({ port: TEST_PORT, signal: controller.signal }).catch(() => {});
+      app.listen({ port: TEST_PORT, signal: controller.signal }).catch(
+        () => {},
+      );
     });
   });
 
@@ -50,7 +52,9 @@ describe("routes", () => {
     });
 
     it("returns insights after data is inserted", async () => {
-      db.sql`INSERT INTO insights (brandId, createdAt, text) VALUES (1, ${new Date().toISOString()}, ${"A test insight"})`;
+      db.sql`INSERT INTO insights (brandId, createdAt, text) VALUES (1, ${
+        new Date().toISOString()
+      }, ${"A test insight"})`;
 
       const res = await fetch(`${base}/insights`);
       expect(res.status).toBe(200);
@@ -136,7 +140,9 @@ describe("routes", () => {
         body: JSON.stringify({ brandId: 1, text: "To be deleted" }),
       }).then((r) => r.json());
 
-      const res = await fetch(`${base}/insights/${created.id}`, { method: "DELETE" });
+      const res = await fetch(`${base}/insights/${created.id}`, {
+        method: "DELETE",
+      });
       expect(res.status).toBe(204);
       await res.body?.cancel();
     });

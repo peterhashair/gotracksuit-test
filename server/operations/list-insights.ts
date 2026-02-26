@@ -13,7 +13,9 @@ export default (input: Input): Insight[] => {
 
   console.log("Listing insights");
 
-  const rows = input.db.sql<insightsTable.Row>`SELECT * FROM insights LIMIT ${limit} OFFSET ${offset}`;
+  const rows = input.db.sql<
+    insightsTable.Row
+  >`SELECT * FROM insights LIMIT ${limit} OFFSET ${offset}`;
 
   const result: Insight[] = rows.map((row) => ({
     ...row,

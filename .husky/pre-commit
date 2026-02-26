@@ -1,3 +1,4 @@
 deno check .
 deno lint
+deno fmt
 deno task test

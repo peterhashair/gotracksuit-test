@@ -24,7 +24,11 @@ describe("deleting an insight from the database", () => {
 
       beforeAll(() => {
         fixture.insights.insert([
-          { brandId: 1, createdAt: new Date().toISOString(), text: "To delete" },
+          {
+            brandId: 1,
+            createdAt: new Date().toISOString(),
+            text: "To delete",
+          },
           { brandId: 2, createdAt: new Date().toISOString(), text: "Keep me" },
         ]);
         result = deleteInsight({ ...fixture, id: 1 });

@@ -19,4 +19,3 @@ export type Insert = {
   createdAt: string;
   text: string;
 };
-
