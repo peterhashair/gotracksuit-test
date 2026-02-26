@@ -9,19 +9,23 @@ type AddInsightProps = ModalProps & {
 };
 
 export const AddInsight = ({ onSuccess, ...props }: AddInsightProps) => {
-  const [brand, setBrand] = useState(BRANDS[0].id);
+  const [brandId, setBrandId] = useState(BRANDS[0].id);
   const [text, setText] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const addInsight = (e: React.FormEvent) => {
     e.preventDefault();
     fetch("/api/insights", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ brand, text }),
-    }).then(() => {
-      props.onClose();
-      onSuccess?.();
-    });
+      body: JSON.stringify({ brandId, text }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        props.onClose();
+        onSuccess?.();
+      })
+      .catch(() => setError("Failed to add insight"));
   };
 
   return (
@@ -31,8 +35,8 @@ export const AddInsight = ({ onSuccess, ...props }: AddInsightProps) => {
           <label className={styles.field}>
             <select
                 className={styles["field-input"]}
-                value={brand}
-                onChange={(e) => setBrand(Number(e.target.value))}
+                value={brandId}
+                onChange={(e) => setBrandId(Number(e.target.value))}
             >
               {BRANDS.map(({ id, name }) => (
                   <option key={id} value={id}>{name}</option>
@@ -49,6 +53,7 @@ export const AddInsight = ({ onSuccess, ...props }: AddInsightProps) => {
                 onChange={(e) => setText(e.target.value)}
             />
           </label>
+          {error && <p className={styles.error}>{error}</p>}
           <Button className={styles.submit} type="submit" label="Add insight" />
         </form>
       </Modal>
