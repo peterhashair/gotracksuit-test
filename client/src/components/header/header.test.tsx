@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Header, HEADER_TEXT } from "./header.tsx";
 
@@ -19,5 +19,20 @@ describe("Header", () => {
 
     fireEvent.click(screen.getByText("Add insight"));
     expect(screen.getByText("Add a new insight")).toBeTruthy();
+  });
+
+  it("calls onInsightAdded after a successful submission", async () => {
+    const onInsightAdded = vi.fn();
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: true });
+
+    render(<Header onInsightAdded={onInsightAdded} />);
+    fireEvent.click(screen.getByText("Add insight"));
+
+    fireEvent.change(screen.getByPlaceholderText("Something insightful..."), {
+      target: { value: "A new insight" },
+    });
+    fireEvent.submit(screen.getByRole("form", { name: "Add insight" }));
+
+    await vi.waitFor(() => expect(onInsightAdded).toHaveBeenCalledOnce());
   });
 });
