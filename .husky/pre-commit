@@ -1,3 +1,4 @@
+#!/bin/sh
 deno check .
 deno lint
 deno fmt
