@@ -15,6 +15,10 @@ export const AddInsight = ({ onSuccess, ...props }: AddInsightProps) => {
 
   const addInsight = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!text.trim()) {
+      setError("Insight text is required");
+      return;
+    }
     fetch("/api/insights", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -31,7 +35,7 @@ export const AddInsight = ({ onSuccess, ...props }: AddInsightProps) => {
   return (
       <Modal {...props}>
         <h1 className={styles.heading}>Add a new insight</h1>
-        <form className={styles.form} onSubmit={addInsight}>
+        <form className={styles.form} onSubmit={addInsight} aria-label="Add insight">
           <label className={styles.field}>
             <select
                 className={styles["field-input"]}
