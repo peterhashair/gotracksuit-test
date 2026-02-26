@@ -19,3 +19,6 @@ export type Insert = {
   createdAt: string;
   text: string;
 };
+
+export const insertStatement = (item: Insert) =>
+  `INSERT INTO insights (brandId, createdAt, text) VALUES (${item.brandId}, '${item.createdAt}', '${item.text}')`;
