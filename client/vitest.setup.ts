@@ -11,10 +11,10 @@ vi.mock("framer-motion", async () => {
     LayoutGroup: ({ children }: { children: React.ReactNode }) =>
       React.createElement(React.Fragment, null, children),
     motion: new Proxy({} as Record<string, React.FC>, {
-      get: (_target, tag: string) =>
+      get: (_target, tag: string | symbol) =>
         ({ children, animate, initial, exit, variants, layout, transition, ...props }: Record<string, unknown>) =>
           React.createElement(
-            tag as keyof JSX.IntrinsicElements,
+            String(tag) as React.ElementType,
             props as Record<string, unknown>,
             children as React.ReactNode,
           ),
