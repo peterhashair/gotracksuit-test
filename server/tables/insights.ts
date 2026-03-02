@@ -7,6 +7,10 @@ export const createTable = `
   )
 `;
 
+export const createIndexes = `
+  CREATE INDEX IF NOT EXISTS idx_insights_brandId ON insights (brandId)
+`;
+
 export type Row = {
   id: number;
   brandId: number;

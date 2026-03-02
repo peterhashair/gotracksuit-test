@@ -18,6 +18,7 @@ console.log(`Opening SQLite database at ${dbFilePath}`);
 await Deno.mkdir(path.dirname(dbFilePath), { recursive: true });
 const db = new Database(dbFilePath);
 db.exec(insightsTable.createTable);
+db.exec(insightsTable.createIndexes);
 
 console.log("Initialising server");
 
