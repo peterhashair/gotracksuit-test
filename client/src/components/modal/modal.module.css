@@ -34,3 +34,19 @@
   height: var(--size-5);
   cursor: pointer;
 }
+
+.title {
+  font: var(--text-xl);
+  font-weight: var(--weight-medium);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-6);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+}
