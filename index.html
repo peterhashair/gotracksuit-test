@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Technical Interview — Q&A</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #222222;
+      --accent: #c8f135;
+      --accent2: #35f1c8;
+      --text: #e8e8e8;
+      --muted: #666;
+      --tag-bg: #1a1a1a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      padding: 60px 24px 120px;
+    }
+
+    .noise {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      margin-bottom: 72px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      color: #fff;
+    }
+
+    h1 span {
+      color: var(--accent);
+    }
+
+    .subtitle {
+      margin-top: 16px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+    }
+
+    .divider {
+      width: 48px;
+      height: 2px;
+      background: var(--accent);
+      margin: 32px 0;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      margin-bottom: 32px;
+      overflow: hidden;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .card:nth-child(2) { animation-delay: 0.1s; }
+    .card:nth-child(3) { animation-delay: 0.2s; }
+    .card:nth-child(4) { animation-delay: 0.3s; }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .q-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      background: rgba(200, 241, 53, 0.08);
+      border: 1px solid rgba(200, 241, 53, 0.2);
+      padding: 4px 10px;
+      border-radius: 2px;
+      white-space: nowrap;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .card-header h2 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.5;
+      letter-spacing: -0.01em;
+    }
+
+    .card-body {
+      padding: 32px;
+    }
+
+    /* Sections inside card */
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .section:last-child { margin-bottom: 0; }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .section p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #b0b0b0;
+    }
+
+    .section p + p {
+      margin-top: 10px;
+    }
+
+    /* Layer list */
+    .layers {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .layer {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      background: var(--tag-bg);
+      border-left: 2px solid var(--border);
+      transition: border-color 0.2s;
+    }
+
+    .layer:hover {
+      border-left-color: var(--accent);
+    }
+
+    .layer-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--accent2);
+      min-width: 130px;
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+
+    .layer-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #999;
+    }
+
+    /* Client quote block */
+    .client-quote {
+      border-left: 2px solid var(--accent);
+      padding: 16px 20px;
+      background: rgba(200, 241, 53, 0.04);
+      margin-top: 4px;
+    }
+
+    .client-quote .quote-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .client-quote p {
+      font-size: 13px;
+      line-height: 1.75;
+      color: #999;
+      font-style: italic;
+    }
+
+    /* Outcome tags */
+    .outcomes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .outcome-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 6px 12px;
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--accent2);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 80px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .card-header { flex-direction: column; gap: 10px; }
+      .layer { flex-direction: column; gap: 6px; }
+      .layer-name { min-width: unset; }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="container">
+
+    <header>
+      <p class="eyebrow">Technical Interview</p>
+      <h1>Q<span>&</span>A</h1>
+      <p class="subtitle">// System design · Architecture · Scalability</p>
+      <div class="divider"></div>
+    </header>
+
+    <!-- Q1 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="q-number">Q — 01</span>
+        <h2>When building an API endpoint, there are typically a few distinct layers involved. Can you briefly describe what each of those layers is responsible for and why it's useful to keep them separate?</h2>
+      </div>
+      <div class="card-body">
+        <div class="section">
+          <p class="section-label">API Layers</p>
+          <div class="layers">
+            <div class="layer">
+              <span class="layer-name">API Gateway</span>
+              <span class="layer-desc">The entry point for all incoming requests. Responsible for authenticating the request, rate limiting, and routing traffic to the correct downstream service.</span>
+            </div>
+            <div class="layer">
+              <span class="layer-name">BFF Layer</span>
+              <span class="layer-desc">An abstraction layer primarily used for public APIs or when serving multiple platforms (e.g. mobile and web). It decouples the frontend contract from the backend schema — so if the database schema changes, only the BFF layer needs updating, leaving the frontend untouched.</span>
+            </div>
+            <div class="layer">
+              <span class="layer-name">Validation</span>
+              <span class="layer-desc">Ensures incoming data is correct and meets required constraints before any processing occurs.</span>
+            </div>
+            <div class="layer">
+              <span class="layer-name">DTO</span>
+              <span class="layer-desc">Data Transfer Objects shape and transform data as it moves between layers, keeping concerns cleanly separated.</span>
+            </div>
+            <div class="layer">
+              <span class="layer-name">Service Layer</span>
+              <span class="layer-desc">Contains the core business logic of the application.</span>
+            </div>
+            <div class="layer">
+              <span class="layer-name">Model / Repository</span>
+              <span class="layer-desc">Handles communication with the database, abstracting away the underlying queries or ORM details.</span>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <p class="section-label">Why Separate?</p>
+          <p>Separation of concerns — each layer has a single responsibility, making the system easier to test, maintain, and scale independently. If one layer changes, the others remain unaffected.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="q-number">Q — 02</span>
+        <h2>Tell us about a technical decision you made that had a significant impact on a project. How would you explain your reasoning to a client?</h2>
+      </div>
+      <div class="card-body">
+        <div class="section">
+          <p class="section-label">Context</p>
+          <p>On a web application project, I made the decision to introduce a BFF (Backend for Frontend) layer to serve both the web and mobile clients from a single, unified backend. Mobile was becoming a requirement, and without this layer, we would have needed a separate API service to handle the different data shapes each platform needed — meaning duplicated logic, more services to maintain, and higher long-term cost.</p>
+        </div>
+        <div class="section">
+          <p class="section-label">The Tradeoff</p>
+          <p>Building the BFF layer added development time upfront. But the long-term benefits outweighed that cost — mobile could be supported without spinning up an entirely new API service, keeping the system clean and maintenance cost low.</p>
+        </div>
+        <div class="section">
+          <p class="section-label">Explaining to a Client</p>
+          <div class="client-quote">
+            <p class="quote-label">// Client-friendly explanation</p>
+            <p>"Think of the BFF as a translator sitting between your app and your users. Instead of building a separate backend every time you add a new platform — like mobile — this layer handles that for you. It cost us some extra time upfront, but it means your mobile app and web app can grow independently without duplicating infrastructure. Long term, it saves time, reduces risk, and makes the system easier to scale."</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="q-number">Q — 03</span>
+        <h2>Describe a time when you had to fix a complex system to improve its scalability or performance. What was the initial issue, what changes did you make, and what were the results?</h2>
+      </div>
+      <div class="card-body">
+        <div class="section">
+          <p class="section-label">The Problem — EzyVet</p>
+          <p>While working at EzyVet on a mobile application, the app was fetching data from three third-party sub-company APIs and aggregating the results on the client side. As usage grew, we started hitting the rate limits of those external APIs — causing slow response times and in some cases showing users an error page.</p>
+          <p>The core issue was that the app was constantly <em>polling</em> the external APIs for data. The more users we had, the more requests we fired, and the faster we burned through rate limits. It didn't scale.</p>
+        </div>
+        <div class="section">
+          <p class="section-label">The Decision</p>
+          <p>Instead of continuing to pull data from the APIs, I proposed flipping the model entirely. Rather than us fetching from them, we'd have the third-party services <strong style="color:#e8e8e8">broadcast data to us via events (webhooks)</strong>. We'd then store that data in a local database within our system. The app would query our own database instead of hitting external APIs directly.</p>
+        </div>
+        <div class="section">
+          <p class="section-label">Results</p>
+          <div class="outcomes">
+            <span class="outcome-tag">↑ Response time improved</span>
+            <span class="outcome-tag">✓ Rate limit errors eliminated</span>
+            <span class="outcome-tag">↑ Scales with user growth</span>
+            <span class="outcome-tag">✓ No extra API services needed</span>
+          </div>
+        </div>
+        <div class="section">
+          <p class="section-label">Explaining to Stakeholders</p>
+          <div class="client-quote">
+            <p class="quote-label">// Stakeholder-friendly explanation</p>
+            <p>"Previously, every time a user opened the app, we were knocking on three different doors asking for data — and those doors had limits on how many times we could knock. Instead, we asked those services to notify us whenever something changed, and we stored that information ourselves. Now when a user opens the app, we answer from our own records instantly. It's faster, more reliable, and won't break as we grow."</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Technical Interview Q&amp;A &nbsp;·&nbsp; System Design &amp; Architecture
+    </footer>
+
+  </div>
+</body>
+</html>
