@@ -16,13 +16,17 @@ export const Insights = (
 ) => {
   const [error, setError] = useState<string | null>(null);
 
-  const deleteInsight = (id: number) => {
-    fetch(`/api/insights/${id}`, { method: "DELETE" })
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        onInsightDeleted?.();
-      })
-      .catch(() => setError("Failed to delete insight"));
+  const deleteInsight = async (id: number) => {
+    try {
+      const res = await fetch(`/api/insights/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        setError("Failed to delete insight");
+        return;
+      }
+      onInsightDeleted?.();
+    } catch {
+      setError("Failed to delete insight");
+    }
   };
 
   return (

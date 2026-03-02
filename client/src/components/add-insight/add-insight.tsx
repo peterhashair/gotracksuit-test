@@ -13,23 +13,27 @@ export const AddInsight = ({ onSuccess, ...props }: AddInsightProps) => {
   const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const addInsight = (e: React.FormEvent) => {
+  const addInsight = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) {
       setError("Insight text is required");
       return;
     }
-    fetch("/api/insights", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ brandId, text }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        props.onClose();
-        onSuccess?.();
-      })
-      .catch(() => setError("Failed to add insight"));
+    try {
+      const res = await fetch("/api/insights", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brandId, text }),
+      });
+      if (!res.ok) {
+        setError("Failed to add insight");
+        return;
+      }
+      props.onClose();
+      onSuccess?.();
+    } catch {
+      setError("Failed to add insight");
+    }
   };
 
   return (
