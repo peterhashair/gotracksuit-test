@@ -1,12 +1,8 @@
-// deno-lint-ignore-file no-explicit-any
 import { Database } from "@db/sqlite";
 import * as oak from "@oak/oak";
 import * as path from "@std/path";
 import { Port } from "../lib/utils/index.ts";
-import createInsight from "./operations/create-insight.ts";
-import deleteInsight from "./operations/delete-insight.ts";
-import listInsights from "./operations/list-insights.ts";
-import lookupInsight from "./operations/lookup-insight.ts";
+import { createRouter } from "./router.ts";
 import * as insightsTable from "./tables/insights.ts";
 
 console.log("Loading configuration");
@@ -22,68 +18,28 @@ console.log(`Opening SQLite database at ${dbFilePath}`);
 await Deno.mkdir(path.dirname(dbFilePath), { recursive: true });
 const db = new Database(dbFilePath);
 db.exec(insightsTable.createTable);
+db.exec(insightsTable.createIndexes);
 
 console.log("Initialising server");
 
-const router = new oak.Router();
-
-router.get("/_health", (ctx) => {
-  ctx.response.body = "OK";
-  ctx.response.status = 200;
-});
-
-router.get("/insights", (ctx) => {
-  try {
-    const result = listInsights({ db });
-    ctx.response.body = result;
-    ctx.response.status = 200;
-  } catch (e) {
-    console.error("GET /insights failed:", e);
-    ctx.response.status = 500;
-  }
-});
-
-router.get("/insights/:id", (ctx) => {
-  try {
-    const params = ctx.params as Record<string, any>;
-    const result = lookupInsight({ db, id: Number(params.id) });
-    ctx.response.body = result;
-    ctx.response.status = 200;
-  } catch (e) {
-    console.error("GET /insights/:id failed:", e);
-    ctx.response.status = 500;
-  }
-});
-
-router.post("/insights", async (ctx) => {
-  try {
-    const body = await ctx.request.body.json();
-    const result = createInsight({
-      db,
-      brandId: body.brandId,
-      text: body.text,
-    });
-    ctx.response.body = result;
-    ctx.response.status = 201;
-  } catch (e) {
-    console.error("POST /insights failed:", e);
-    ctx.response.status = 500;
-  }
-});
-
-router.delete("/insights/:id", (ctx) => {
-  try {
-    const params = ctx.params as Record<string, any>;
-    const found = deleteInsight({ db, id: Number(params.id) });
-    ctx.response.status = found ? 204 : 404;
-  } catch (e) {
-    console.error("DELETE /insights/:id failed:", e);
-    ctx.response.status = 500;
-  }
-});
+const router = createRouter(db);
 
 const app = new oak.Application();
 
+const allowedOrigin = Deno.env.get("ALLOWED_ORIGIN") ?? "*";
+app.use(async (ctx, next) => {
+  ctx.response.headers.set("Access-Control-Allow-Origin", allowedOrigin);
+  ctx.response.headers.set(
+    "Access-Control-Allow-Methods",
+    "GET, POST, DELETE, OPTIONS",
+  );
+  ctx.response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+  if (ctx.request.method === "OPTIONS") {
+    ctx.response.status = 204;
+    return;
+  }
+  await next();
+});
 app.use(router.routes());
 app.use(router.allowedMethods());
 

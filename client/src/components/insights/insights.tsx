@@ -4,6 +4,8 @@ import { cx } from "../../lib/cx.ts";
 import styles from "./insights.module.css";
 import type { Insight } from "../../schemas/insight.ts";
 import { BRANDS } from "../../lib/consts.ts";
+import { Modal } from "../modal/modal.tsx";
+import { Button } from "../button/button.tsx";
 
 type InsightsProps = {
   insights: Insight[];
@@ -15,14 +17,23 @@ export const Insights = (
   { insights, className, onInsightDeleted }: InsightsProps,
 ) => {
   const [error, setError] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
-  const deleteInsight = (id: number) => {
-    fetch(`/api/insights/${id}`, { method: "DELETE" })
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        onInsightDeleted?.();
-      })
-      .catch(() => setError("Failed to delete insight"));
+  const deleteInsight = async () => {
+    if (pendingDeleteId === null) return;
+    try {
+      const res = await fetch(`/api/insights/${pendingDeleteId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        setError("Failed to delete insight");
+        return;
+      }
+      setPendingDeleteId(null);
+      onInsightDeleted?.();
+    } catch {
+      setError("Failed to delete insight");
+    }
   };
 
   return (
@@ -44,7 +55,7 @@ export const Insights = (
                     <span>{createdAt.toString()}</span>
                     <Trash2Icon
                       className={styles["insight-delete"]}
-                      onClick={() => deleteInsight(id)}
+                      onClick={() => setPendingDeleteId(id)}
                     />
                   </div>
                 </div>
@@ -54,6 +65,18 @@ export const Insights = (
           )
           : <p>We have no insight!</p>}
       </div>
+      <Modal
+        open={pendingDeleteId !== null}
+        onClose={() => setPendingDeleteId(null)}
+      >
+        <Modal.CloseIcon />
+        <Modal.Title>Delete insight?</Modal.Title>
+        <Modal.Content>This action cannot be undone.</Modal.Content>
+        <Modal.Footer>
+          <Button label="Cancel" onClick={() => setPendingDeleteId(null)} />
+          <Button label="Delete" onClick={deleteInsight} />
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

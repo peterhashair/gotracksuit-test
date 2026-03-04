@@ -1,0 +1,5 @@
+#!/bin/sh
+deno check server client/src
+deno lint
+deno fmt --check
+deno task test

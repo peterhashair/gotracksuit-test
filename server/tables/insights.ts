@@ -7,6 +7,10 @@ export const createTable = `
   )
 `;
 
+export const createIndexes = `
+  CREATE INDEX IF NOT EXISTS idx_insights_brandId ON insights (brandId)
+`;
+
 export type Row = {
   id: number;
   brandId: number;
@@ -19,6 +23,3 @@ export type Insert = {
   createdAt: string;
   text: string;
 };
-
-export const insertStatement = (item: Insert) =>
-  `INSERT INTO insights (brandId, createdAt, text) VALUES (${item.brandId}, '${item.createdAt}', '${item.text}')`;
