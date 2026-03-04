@@ -26,6 +26,20 @@ const router = createRouter(db);
 
 const app = new oak.Application();
 
+const allowedOrigin = Deno.env.get("ALLOWED_ORIGIN") ?? "*";
+app.use(async (ctx, next) => {
+  ctx.response.headers.set("Access-Control-Allow-Origin", allowedOrigin);
+  ctx.response.headers.set(
+    "Access-Control-Allow-Methods",
+    "GET, POST, DELETE, OPTIONS",
+  );
+  ctx.response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+  if (ctx.request.method === "OPTIONS") {
+    ctx.response.status = 204;
+    return;
+  }
+  await next();
+});
 app.use(router.routes());
 app.use(router.allowedMethods());
 

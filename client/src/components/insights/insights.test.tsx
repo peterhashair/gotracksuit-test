@@ -34,6 +34,8 @@ describe("insights", () => {
     const trashIcons = container.querySelectorAll("svg");
     fireEvent.click(trashIcons[0]);
 
+    fireEvent.click(screen.getByText("Delete"));
+
     await vi.waitFor(() => expect(onInsightDeleted).toHaveBeenCalledOnce());
   });
 
@@ -44,6 +46,8 @@ describe("insights", () => {
 
     const trashIcons = container.querySelectorAll("svg");
     fireEvent.click(trashIcons[0]);
+
+    fireEvent.click(screen.getByText("Delete"));
 
     await screen.findByText("Failed to delete insight");
   });
